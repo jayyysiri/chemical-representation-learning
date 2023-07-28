@@ -1,0 +1,49 @@
+# This GitHub Action workflow automatically runs all tests in test/src upon update
+# to src.
+
+name: test_src
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # Checkout chemical-representation-learning code
+      #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      - uses: actions/checkout@v3
+
+      #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # Display GitHub Action-related information
+      #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      - name: Display GitHub Action-related information
+        run: |
+              echo "This job was triggered by a ${{ github.event_name }} event."
+              echo "This job is running on a ${{ runner.os }} server at GitHub!"
+              echo "The name of the repository is ${{ github.repository }}."
+              echo "The name of the branch is ${{ github.ref }}."
+              echo "The current working directory is $PWD"
+              echo "The GitHub workspace is ${{ github.workspace }}"
+              echo "The shell used is $SHELL"
+      
+      #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # Set up Python
+      #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      - name: setup python
+        uses: actions/setup-python@v2
+  
+      #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # Install required Python packages
+      #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      - name: install python packages
+        run: |
+          sudo pip install -r requirements.pip
+
+      #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      # Run all tests in tests/src
+      #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      - name: Run tests
+        run: python -m pytest tests/src/**
